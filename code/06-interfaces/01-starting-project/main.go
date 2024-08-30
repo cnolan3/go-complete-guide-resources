@@ -7,13 +7,29 @@ import (
 	"strings"
 
 	"example.com/note/note"
+	"example.com/note/todo"
 )
 
 func main() {
 	title, content := getNoteData()
+	todoText := getTodoData()
+
+	todo, err := todo.New(todoText)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	todo.Display()
+	err = todo.Save()
+	if err != nil {
+		fmt.Println("Saving the todo failed.")
+		return
+	}
+
+	fmt.Println("Saving the todo succeeded!")
 
 	userNote, err := note.New(title, content)
-
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -21,13 +37,17 @@ func main() {
 
 	userNote.Display()
 	err = userNote.Save()
-
 	if err != nil {
 		fmt.Println("Saving the note failed.")
 		return
 	}
 
 	fmt.Println("Saving the note succeeded!")
+}
+
+func getTodoData() string {
+	text := getUserInput("Todo text: ")
+	return text
 }
 
 func getNoteData() (string, string) {
@@ -43,7 +63,6 @@ func getUserInput(prompt string) string {
 	reader := bufio.NewReader(os.Stdin)
 
 	text, err := reader.ReadString('\n')
-
 	if err != nil {
 		return ""
 	}
